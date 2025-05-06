@@ -18,5 +18,5 @@ for item in data:
     start = item["start"]
     end = item["end"]
     downloader.download_and_process_audio(
-        url, start, end, 1000, 0000, f"{output_folder}/{name}.wav"
+        url, start, end, 1000, 3000, f"{output_folder}/{name}.wav"
     )
