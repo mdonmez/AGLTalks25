@@ -51,7 +51,11 @@ class AudioDownloader:
         print("Trimming and applying fade-in/fade-out...")
         audio = AudioSegment.from_file(temp_file_downloaded)
         segment = audio[start_ms:end_ms]
-        segment = segment.fade_in(fade_in).fade_out(fade_out)
+        # Apply fades only if duration is greater than 0
+        if fade_in and fade_in > 0:
+            segment = segment.fade_in(fade_in)
+        if fade_out and fade_out > 0:
+            segment = segment.fade_out(fade_out)
 
         # Output format and codec based on extension
         ext = os.path.splitext(output_location)[1].lower()
@@ -78,6 +82,7 @@ if __name__ == "__main__":
         start_time="01:20",
         end_time="01:50",
         fade_in=1000,
-        fade_out=3000,
+        # fade_out=3000,
+        fade_out=0,
         output_location="output_audio.wav",
     )
