@@ -1,15 +1,86 @@
-from audio_downloader import AudioDownloader
-import json
+import os
+import yt_dlp
+from pydub import AudioSegment
 
-with open("music-data.json", "r") as f:
+
+class AudioDownloader:
+    def __init__(self):
+        pass
+
+    def download_and_process_audio(
+        self, url, start_time, end_time, fade_in, fade_out, output_location
+    ):
+        """
+        Downloads audio from a URL, trims it, applies fade in/out, and exports to output_location.
+        Args:
+            url (str): Source video/audio URL
+            start_time (str): Start time in 'mm:ss' format
+            end_time (str): End time in 'mm:ss' format
+            fade_in (int): Fade-in duration in milliseconds
+            fade_out (int): Fade-out duration in milliseconds
+            output_location (str): Output file path (e.g. 'output.wav')
+        """
+        temp_file_base = "temp_audio"
+        temp_file_downloaded = temp_file_base + "_dl.m4a"
+
+        def time_str_to_ms(time_str):
+            minutes, seconds = map(int, time_str.strip().split(":"))
+            return (minutes * 60 + seconds) * 1000
+
+        start_ms = time_str_to_ms(start_time)
+        end_ms = time_str_to_ms(end_time)
+        if end_ms <= start_ms:
+            raise ValueError("End time must be greater than start time.")
+
+        ydl_opts = {
+            "format": "bestaudio/best",
+            "outtmpl": temp_file_base + "_dl",
+            "postprocessors": [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "m4a",
+                    "preferredquality": "0",
+                }
+            ],
+        }
+
+        print("Downloading full audio in best quality (m4a)...")
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+
+        print("Trimming and applying fade-in/fade-out...")
+        audio = AudioSegment.from_file(temp_file_downloaded)
+        segment = audio[start_ms:end_ms]
+        # Apply fades only if duration is greater than 0
+        if fade_in and fade_in > 0:
+            segment = segment.fade_in(fade_in)
+        if fade_out and fade_out > 0:
+            segment = segment.fade_out(fade_out)
+
+        # Output format and codec based on extension
+        ext = os.path.splitext(output_location)[1].lower()
+        if ext == ".wav":
+            output_audio_format = "wav"
+            output_audio_codec = "pcm_s16le"
+        elif ext == ".flac":
+            output_audio_format = "flac"
+            output_audio_codec = "flac"
+        else:
+            raise ValueError("Unsupported output file format. Use .wav or .flac.")
+
+        segment.export(
+            output_location, format=output_audio_format, codec=output_audio_codec
+        )
+        os.remove(temp_file_downloaded)
+        print(f"Done! Exported to: {output_location}")
+
+
+with open("music_data.json", "r") as f:
     data = json.load(f)
 
 downloader = AudioDownloader()
-# lets go through the data and download the audio heres the data
-# [{"name":"hatice_hilal_aslan","url":"https://music.youtube.com/watch?v=wjNln9mXuTI","title":"Deceptacon","start":1.38,"end":2.01},{"name":"betul_aydog","url":"https://music.youtube.com/watch?v=4KLVnmChtIE","title":"Boys Don't Cry","start":0.00,"end":0.22},{"name":"yasin_efe_baser","url":"https://music.youtube.com/watch?v=oaDnuExc1sI","title":"This Cocaine Makes Me Feel Like I'm On This Song","start":0.00,"end":0.25},{"name":"elif_barin","url":"https://music.youtube.com/watch?v=6LEs1yKXnb8","title":"Tek It","start":0.00,"end":0.17},{"name":"hacer_bayram","url":"https://music.youtube.com/watch?v=llmbcMmZuQ4","title":"Brother Louie Mix '98 (Radio Edit) (feat. Eric Singleton)","start":0.00,"end":0.17},{"name":"ezgi_karaaslan","url":"https://music.youtube.com/watch?v=n-IwmbARwBo","title":"Can I Call You Tonight?","start":1.10,"end":1.32},{"name":"nehir_ogunday","url":"https://music.youtube.com/watch?v=gG9fEaITgCk","title":"Age of Consent","start":1.38,"end":1.50}]
 
-
-output_folder = "musics"
+output_folder = "downloaded_musics"
 
 # go through name, url, start, end and download the audio
 for item in data:

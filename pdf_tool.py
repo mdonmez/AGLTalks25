@@ -21,6 +21,22 @@ def merge_pdfs(pdf_files: List[str], output_pdf: str) -> None:
     merger.close()
 
 
+# USE THIS IF YOU WANT TO ADD A BLANK SLIDE
+# def add_blank_slide_to_pdf(input_pdf: str, output_pdf: str) -> None:
+#     """
+#     Adds a blank slide of specified size to the end of a PDF file.
+
+#     Args:
+#         input_pdf (str): Path to the input PDF file.
+#         output_pdf (str): Path to the output PDF file.
+#     """
+#     merger = PdfWriter()
+#     merger.append(input_pdf)
+#     merger.add_blank_page()
+#     merger.write(output_pdf)
+#     merger.close()
+
+
 def main():
 
     # Sıra | Ad                 |
@@ -38,20 +54,20 @@ def main():
     # 11   | META OUTRO         |
 
     pdf_files = [
-        "giris-pdfler/meta-intro.pdf",
-        "giris-pdfler/hilal-sunum.pdf",
-        "giris-pdfler/betul-sunum.pdf",
-        "giris-pdfler/yasin-sunum.pdf",
-        "giris-pdfler/nehir-sunum.pdf",
-        "giris-pdfler/hacer-sunum.pdf",
-        "giris-pdfler/cuneyt-sunum.pdf",
-        "giris-pdfler/ezgi-sunum.pdf",
-        "giris-pdfler/efe-sunum.pdf",
-        "giris-pdfler/elif-sunum.pdf",
-        "giris-pdfler/meta-outro.pdf",
+        "eski-sunum-pdfler/meta-intro.pdf",
+        "eski-sunum-pdfler/hilal-sunum.pdf",
+        "eski-sunum-pdfler/betul-sunum.pdf",
+        "eski-sunum-pdfler/yasin-sunum.pdf",
+        "eski-sunum-pdfler/nehir-sunum.pdf",
+        "eski-sunum-pdfler/hacer-sunum.pdf",
+        "eski-sunum-pdfler/cuneyt-sunum.pdf",
+        "eski-sunum-pdfler/ezgi-sunum.pdf",
+        "eski-sunum-pdfler/efe-sunum.pdf",
+        "eski-sunum-pdfler/elif-sunum.pdf",
+        "eski-sunum-pdfler/meta-outro.pdf",
     ]
 
-    output_pdf = "META-AGL-TALKS-SLIDE-2025.pdf"
+    output_pdf = "META-SLIDE-2025.pdf"
     merge_pdfs(pdf_files, output_pdf)
 
 
