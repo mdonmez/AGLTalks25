@@ -2,6 +2,7 @@ import os
 import yt_dlp
 from pydub import AudioSegment
 import json
+import time
 
 
 class AudioDownloader:
@@ -92,3 +93,5 @@ for item in data:
     downloader.download_and_process_audio(
         url, start, end, 1000, 3000, f"{output_folder}/{name}.wav"
     )
+    print("Sleeping for 1 second...")
+    time.sleep(1)
